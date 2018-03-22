@@ -12,12 +12,11 @@ const saltRound = 10;
 
 router.get('/users', function(req, res){
 
-    User.find({}, function(err, user){
+    User.find({}, function(err, users){
         if (err) {
-            console.log(err);
             return res.json({type: 'error', message: 'You don\'t have access to that.'});
         }
-        res.send(user);
+        res.json(users);
     });
 });
 
@@ -25,25 +24,36 @@ router.get('/users', function(req, res){
 
 
 router.post('/register', function(req, res){
+    var username = req.body.username;
+    var password = req.body.password;
 
-    if (!req.body.username || !req.body.password){
-        return res.json({type: 'error', message: 'Username or Password is not validate'});
+    if (!username || !password){
+        return res.json({type: 'error', message: 'Your username or password is not validate.'});
     }
+    var user = new User({username: username, password: password});
 
-    bcrypt.hash(req.body.password, saltRound, function(err, pwhash) {
-        const user = {
-            username: req.body.username,
-            password: pwhash
-        };
-
-        User.create(user, function(err, user){
-            if (err) {
-                console.log(err);
-                return res.json({type: 'error', message: 'Username or Password is not validate'});
-            }
-            res.json({type: 'success', username: user.username});
-        });
+    user.registerUser(function(err, user){
+        if (err){
+            res.json({success: false, extras: { msg: 'Your username or password is not validate.'} })
+        }
+        console.log('success');
+        res.json({success: true, extras: { msg: 'Sign in successful.', payload: user} })
     });
+
+    // bcrypt.hash(password, saltRound, function(err, pwhash) {
+    //
+    //     const user = {
+    //         username: username,
+    //         password: pwhash
+    //     };
+    //
+    //     User.create(user, function(err, user){
+    //         if (err) {
+    //             return res.json({type: 'error', message: 'Username or Password is not validate'});
+    //         }
+    //         res.json({type: 'success', username: user.username});
+    //     });
+    // });
 });
 
 

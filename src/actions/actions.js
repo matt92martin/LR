@@ -63,7 +63,7 @@ function thunkRegisterUser(username, password){
 export function postRegisterUser(username, password) {
     console.log('postRegisterUser');
     return function (dispatch) {
-        return thunkRegisterUser().then(
+        return thunkRegisterUser(username, password).then(
             user => console.log( user ),
             error => console.log( error )
         )
