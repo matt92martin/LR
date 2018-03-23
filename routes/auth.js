@@ -23,37 +23,29 @@ router.get('/users', function(req, res){
 
 
 
-router.post('/register', function(req, res){
+router.post('/register', function(req, res, next){
     var username = req.body.username;
     var password = req.body.password;
 
     if (!username || !password){
         return res.json({type: 'error', message: 'Your username or password is not validate.'});
     }
-    var user = new User({username: username, password: password});
 
-    user.registerUser(function(err, user){
-        if (err){
-            res.json({success: false, extras: { msg: 'Your username or password is not validate.'} })
-        }
-        console.log('success');
-        res.json({success: true, extras: { msg: 'Sign in successful.', payload: user} })
+    User.hashPW(password, function(err, pwhash){
+
+        if (err) return res.json({success: false, extras: { msg: 'Your username or password is not validate.'} });
+
+        User.create({username: username, password: pwhash}, function (err, user) {
+            if (err) return res.json({ success: false, extras: { msg: 'User could not be created.' } });
+
+            // res.json({success: true, extras: { msg: 'Sign in successful.', payload: user.username } });
+            var json = JSON.stringify({success: true});
+            console.log(json);
+            res.json(json);
+        });
+
     });
 
-    // bcrypt.hash(password, saltRound, function(err, pwhash) {
-    //
-    //     const user = {
-    //         username: username,
-    //         password: pwhash
-    //     };
-    //
-    //     User.create(user, function(err, user){
-    //         if (err) {
-    //             return res.json({type: 'error', message: 'Username or Password is not validate'});
-    //         }
-    //         res.json({type: 'success', username: user.username});
-    //     });
-    // });
 });
 
 

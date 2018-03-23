@@ -32,23 +32,15 @@ userSchema.methods.validatePassword = function(ptpw, hash){
 };
 
 
-userSchema.methods.registerUser = function(cb){
+userSchema.statics.hashPW = function(password, cb){
 
-    bcrypt.hash(this.password, saltRound, function(err, pwhash) {
+    bcrypt.hash(password, saltRound, function(err, pwhash) {
 
-        const user = {
-            username: this.username,
-            password: pwhash
-        };
+        if (err) cb(err);
 
-        this.save(function(err){
-            if (err) {
-                cb(err);
-            }
-            cb(null);
-        });
+        cb(null, pwhash);
+
     });
-
 
 };
 
