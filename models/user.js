@@ -1,10 +1,11 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-var saltRound = 10;
+const saltRound = 10;
 
-var userSchema = new Schema({
+const userSchema = new Schema({
     username: {
         type: String,
         unique: true,
@@ -33,6 +34,8 @@ userSchema.methods.validatePassword = function(ptpw, hash){
 
 
 userSchema.statics.hashPW = function(password, cb){
+
+
 
     bcrypt.hash(password, saltRound, function(err, pwhash) {
 

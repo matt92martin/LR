@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import RegistrationForm from './forms/register'
+import { withRouter } from 'react-router'
 
 
 class App extends Component{

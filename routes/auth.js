@@ -24,24 +24,31 @@ router.get('/users', function(req, res){
 
 
 router.post('/register', function(req, res, next){
-    var username = req.body.username;
-    var password = req.body.password;
+    const username = req.body.username;
+    const password = req.body.password;
 
     if (!username || !password){
         return res.json({type: 'error', message: 'Your username or password is not validate.'});
     }
+
+    User.find({username: username}, (err, user) => {
+        if (user) return res.json({ success: false, extras: { msg: 'User could not be created.' } });
+    });
 
     User.hashPW(password, function(err, pwhash){
 
         if (err) return res.json({success: false, extras: { msg: 'Your username or password is not validate.'} });
 
         User.create({username: username, password: pwhash}, function (err, user) {
+
             if (err) return res.json({ success: false, extras: { msg: 'User could not be created.' } });
 
-            // res.json({success: true, extras: { msg: 'Sign in successful.', payload: user.username } });
-            var json = JSON.stringify({success: true});
-            console.log(json);
-            res.json(json);
+            jwt.sign({ foo: 'bar' }, cert, { algorithm: 'RS256' }, function(err, token) {
+
+                res.json({success: true, extras: { msg: 'Sign in successful.', payload: user.username } });
+
+            });
+
         });
 
     });

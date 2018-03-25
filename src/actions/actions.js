@@ -14,21 +14,6 @@ export function actionSomething(text) {
     }
 }
 
-export const INCREMENT_ASYNC = 'INCREMENT_ASYNC'
-export function increment() {
-    return {
-        type: INCREMENT_ASYNC
-    }
-}
-
-export const REQUEST_REGISTER_USER = 'REQUEST_REGISTER_USER'
-export function requestRegisterUser(username, password) {
-    return {
-        type: REQUEST_REGISTER_USER,
-        username,
-        password
-    }
-}
 
 export const SET_LOGIN = "SET_LOGIN"
 export function setLogin(username, token) {
@@ -58,11 +43,13 @@ function thunkRegisterUser(username, password){
 
 
 export function postRegisterUser(username, password) {
-    console.log('postRegisterUser');
     return function (dispatch) {
         return thunkRegisterUser(username, password).then(
-            user  => console.log( user ),
-            error => console.log( error )
+            resp  => resp.json()
+        ).then(
+            user => console.log(user)
+        ).catch(
+            err => { throw new Error(err) }
         )
     }
 }
